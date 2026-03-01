@@ -3,7 +3,7 @@ This file contains functions that work on entire documents at a time
 (and not line-by-line).
 '''
 
-from markdown_compiler.util.line_functions import *
+from markdown_compiler.util import line_functions
 
 
 def compile_lines(text):
@@ -176,15 +176,15 @@ def compile_lines(text):
             line = stripped
 
         # Apply line transformations
-        line = compile_headers(line)
-        line = compile_strikethrough(line)
-        line = compile_bold_stars(line)
-        line = compile_bold_underscore(line)
-        line = compile_italic_star(line)
-        line = compile_italic_underscore(line)
-        line = compile_code_inline(line)
-        line = compile_images(line)
-        line = compile_links(line)
+        line = line_functions.compile_headers(line)
+        line = line_functions.compile_strikethrough(line)
+        line = line_functions.compile_bold_stars(line)
+        line = line_functions.compile_bold_underscore(line)
+        line = line_functions.compile_italic_star(line)
+        line = line_functions.compile_italic_underscore(line)
+        line = line_functions.compile_code_inline(line)
+        line = line_functions.compile_images(line)
+        line = line_functions.compile_links(line)
 
         new_lines.append(line)
 
