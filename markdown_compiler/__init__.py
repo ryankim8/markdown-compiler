@@ -133,28 +133,65 @@ def compile_lines(text):
     lines = text.split('\n')
     new_lines = []
     in_paragraph = False
-    for line in lines:
-        line = line.strip()
-        if line=='':
+    in_codeblock = False
+
+    for raw_line in lines:
+        stripped = raw_line.strip()
+
+        # Toggle fenced code blocks
+        if stripped.startswith("```"):
+            if not in_codeblock:
+                in_codeblock = True
+                # If we were in a paragraph, do NOT close it; doctests show <pre> inside <p>
+                new_lines.append("<pre>")
+            else:
+                in_codeblock = False
+                new_lines.append("</pre>")
+            continue
+
+        # Inside code block: preserve exact line, no markdown transforms, no stripping
+        if in_codeblock:
+            new_lines.append(raw_line)
+            continue
+
+        # Outside code block: paragraph handling
+        if stripped == "":
             if in_paragraph:
-                line='</p>'
+                new_lines.append("</p>")
                 in_paragraph = False
+            else:
+                new_lines.append("")  # keep blank lines for doctest <BLANKLINE>
+            continue
+
+        # Header lines should not be in paragraphs
+        if stripped.startswith("#"):
+            if in_paragraph:
+                new_lines.append("</p>")
+                in_paragraph = False
+            line = stripped
         else:
-            if line[0] != '#' and not in_paragraph:
+            if not in_paragraph:
                 in_paragraph = True
-                line = '<p>\n'+line
-            line = compile_headers(line)
-            line = compile_strikethrough(line)
-            line = compile_bold_stars(line)
-            line = compile_bold_underscore(line)
-            line = compile_italic_star(line)
-            line = compile_italic_underscore(line)
-            line = compile_code_inline(line)
-            line = compile_images(line)
-            line = compile_links(line)
+                new_lines.append("<p>")
+            line = stripped
+
+        # Apply line transformations
+        line = compile_headers(line)
+        line = compile_strikethrough(line)
+        line = compile_bold_stars(line)
+        line = compile_bold_underscore(line)
+        line = compile_italic_star(line)
+        line = compile_italic_underscore(line)
+        line = compile_code_inline(line)
+        line = compile_images(line)
+        line = compile_links(line)
+
         new_lines.append(line)
-    new_text = '\n'.join(new_lines)
-    return new_text
+
+    if in_paragraph:
+        new_lines.append("</p>")
+
+    return "\n".join(new_lines)
 
 
 def markdown_to_html(markdown, add_css):
@@ -225,7 +262,7 @@ def minify(html):
     >>> minify('a\n\n\n\n\n\n\n\n\n\n\n\n\n\nb\n\n\n\n\n\n\n\n\n\n')
     'a b'
     '''
-    return html
+    return " ".join(html.split())
 
 
 def convert_file(input_file, add_css):
