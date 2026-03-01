@@ -225,10 +225,10 @@ def markdown_to_html(markdown, add_css):
 <link rel="stylesheet" href="https://izbicki.me/css/code.css" />
 <link rel="stylesheet" href="https://izbicki.me/css/default.css" />
         '''
-    html+='''
+    html += '''
 </head>
 <body>
-    '''+compile_lines(markdown)+'''
+    ''' + compile_lines(markdown) + '''
 </body>
 </html>
     '''
@@ -291,5 +291,5 @@ def convert_file(input_file, add_css):
     html = minify(html)
 
     # write the output file
-    with open(input_file[:-2]+'html', 'w') as f:
+    with open(input_file[:-2] + 'html', 'w') as f:
         f.write(html)

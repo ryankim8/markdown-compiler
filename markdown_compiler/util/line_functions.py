@@ -2,6 +2,7 @@
 Each of the functions in this file takes a single line of input and transforms the line in some way.
 '''
 
+
 def compile_headers(line):
     """
     Convert markdown headers into <h1>,<h2>,etc tags.
@@ -39,8 +40,6 @@ def compile_headers(line):
     if line[:7] == "###### ":
         line = line.replace("###### ", "<h6> ") + "</h6>"
     return line
-
-
 
 def compile_italic_star(line):
     '''
