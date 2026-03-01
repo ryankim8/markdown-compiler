@@ -41,6 +41,7 @@ def compile_headers(line):
         line = line.replace("###### ", "<h6> ") + "</h6>"
     return line
 
+
 def compile_italic_star(line):
     '''
     Convert "*italic*" into "<i>italic</i>".
